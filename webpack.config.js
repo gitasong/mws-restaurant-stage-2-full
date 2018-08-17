@@ -13,6 +13,12 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, './client/public')
   },
+  resolve: {
+    modules: ['node_modules/'],
+    alias: {
+        'idb': 'idb/lib/idb.js'
+    }
+  },
   devtool: 'source-maps',
   mode: 'development',
   devServer: {
