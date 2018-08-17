@@ -5,11 +5,12 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
   entry: {
-    main: './client/src/js/main.js',
-    restaurant_info: './client/src/js/restaurant_info.js',
+    'js/main': './client/src/js/main.js',
+    'js/restaurant_info': './client/src/js/restaurant_info.js',
+    'sw': './client/src/sw.js'
   },
   output: {
-    filename: 'js/[name].js',
+    filename: '[name].js',
     path: path.resolve(__dirname, './client/public')
   },
   devtool: 'source-maps',
@@ -19,11 +20,6 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      {
-        from: 'src/sw.js',
-        to: 'sw.js',
-        toType: 'file'
-      },
       {
         from: 'src/js/dbhelper.js',
         to: 'js/dbhelper.js',
