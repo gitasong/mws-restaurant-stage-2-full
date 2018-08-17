@@ -54,8 +54,19 @@ self.addEventListener('activate', (event) => {
 
 // Fetch assets from cache if offline, from network otherwise
 self.addEventListener('fetch', (event) => {
-  console.log(event)
+  console.log(event);
+
   event.respondWith(
     caches.match(event.request, {ignoreSearch: true}).then((response) => response || fetch(event.request))
-  );
+  ).then((httpResponse) => {
+    // get match from idb || fetch(event.request)
+    return dbPromise.then((db) => {
+      const tx = db.transaction('restaurants');
+      const restaurantStore = tx.objectStore('restaurants');
+      return restaurantStore.getAll();
+    }).then((restaurants) => console.log('Restaurants fetched from db:', restaurants))
+    .then((restaurants) => restaurants || fetch(event.request))
+    .catch("Failed to fetch restaurants from db");
+  })
+
 });
