@@ -1,6 +1,6 @@
 // Much of this code is courtesy of my and Dylan Scheffer's notes from the Udacity service worker course
 
-self.importScripts('/node_modules/idb/lib/idb.js');
+import idb from 'idb';
 
 const staticCacheName = 'restaurants-v1';
 
