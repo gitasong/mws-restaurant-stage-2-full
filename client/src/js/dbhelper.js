@@ -75,6 +75,7 @@ export default class DBHelper {
       const restaurants = data;  // in JSON format?
       console.log('Restaurants from server: ', restaurants);
       callback(null, restaurants);
+      return restaurants;
     })
     .catch((error) => {
       callback(error, null);  // FIXME: getting "Uncaught (in promise) TypeError: callback is not a function"
@@ -84,23 +85,22 @@ export default class DBHelper {
   static populateDatabase() {
     // fetch all restaurants with proper error handling.
     const dbPromise = DBHelper.openDatabase();
-    // const restaurants = DBHelper.serveRestaurants();
     dbPromise.then(function(db) {
-      const tx = db.transaction('restaurants', 'readwrite');
-      const restaurantStore = tx.objectStore('restaurants');
+      DBHelper.serveRestaurants((error, restaurants) => {
+        const tx = db.transaction('restaurants', 'readwrite');
+        const restaurantStore = tx.objectStore('restaurants');
 
-      return Promise.all(
-        restaurants.map(function(restaurant) {
+        return Promise.all(restaurants.map(function(restaurant) {
           console.log('Adding restaurant: ', restaurant);
           return restaurantStore.put(restaurant);
-        })
-      ).then(function(result) {
-        console.log('Result from populateDatabase: ', result);
-      }).catch(function(error) {
-        tx.abort();
-        console.log(error);
-      }).then(function() {
-        console.log('All items added successfully!');  // TODO:  Fix location of success message, because it will fire even on transaction abort
+        })).then(function(result) {
+          console.log('Result from populateDatabase: ', result);
+        }).catch(function(error) {
+          tx.abort();
+          console.log(error);
+        }).then(function() {
+          console.log('All items added successfully!');  // TODO:  Fix location of success message, because it will fire even on transaction abort
+        });
       });
     });
   }
@@ -112,9 +112,12 @@ export default class DBHelper {
     return dbPromise.then(function(db) {
       var tx = db.transaction('restaurants', 'readonly');
       var restaurantStore = tx.objectStore('restaurants');
-      return restaurantStore.getAll();  // returns an array
-    }).then((restaurants) => console.log('Fetching restaurants from database', restaurants)
-    ).catch((error) => console.error('Error fetching restaurants from database', error));
+      return restaurantStore.getAll()  // returns an array
+      .then((restaurants) => {
+        console.log('Fetching restaurants from database', restaurants);
+        return restaurants;
+      });
+    }).catch((error) => console.error('Error fetching restaurants from database', error));
   }
 
   /**
