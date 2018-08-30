@@ -52,16 +52,16 @@ export default class DBHelper {
   /**
    * Fetch restaurants from database if present; from server otherwise
    */
-  static routeRestaurants() {
-    DBHelper.populateDatabase();  // FIXME: doesn't resturn anything (including a database), so getRestaruants() is going to be undefined?
+  static routeRestaurants(callback) {
     DBHelper.getRestaurants()
     .then((restaurants) => {
-      if (restaurants) {
+      if (restaurants.length) {
         console.log('Displaying restaurants from database');
-        return restaurants;  // in array format
+        if (callback) callback(null, restaurants);
+        return restaurants;
       } else {
         console.log('Displaying restaurants from server');
-        DBHelper.serveRestaurants();  // in JSON format
+        DBHelper.populateDatabase(callback);
       }
     });
   }
