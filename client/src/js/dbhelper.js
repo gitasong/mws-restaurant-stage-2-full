@@ -69,17 +69,19 @@ export default class DBHelper {
   static serveRestaurants(callback) {
     fetch(DBHelper.DATABASE_URL)
     .then(response => {
-      if (response.ok) return response.json();
-      throw new Error(`Request failed. Returned status of ${error}.`);
-    }).then((data) => {
-      const restaurants = data;  // in JSON format?
-      console.log('Restaurants from server: ', restaurants);
-      callback(null, restaurants);
-      return restaurants;
+      if (!response.ok)
+        throw new Error(`Request failed. Returned status of ${error}.`);
+      return response.json()
+      .then((data) => {
+        const restaurants = data;
+        console.log('Restaurants from server: ', restaurants);
+        callback(null, restaurants);
+        // return restaurants;
+      })
+      .catch((error) => {
+        callback(error, null);
+      });
     })
-    .catch((error) => {
-      callback(error, null);  // FIXME: getting "Uncaught (in promise) TypeError: callback is not a function"
-    });
   }
 
   static populateDatabase() {
