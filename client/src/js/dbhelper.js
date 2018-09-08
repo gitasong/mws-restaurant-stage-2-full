@@ -84,7 +84,7 @@ export default class DBHelper {
     })
   }
 
-  static populateDatabase() {
+  static populateDatabase(callback) {
     // fetch all restaurants with proper error handling.
     const dbPromise = DBHelper.openDatabase();
     dbPromise.then(function(db) {
@@ -97,6 +97,7 @@ export default class DBHelper {
           return restaurantStore.put(restaurant);
         })).then(function(result) {
           console.log('Result from populateDatabase: ', result);
+          callback(null, restaurants);
         }).catch(function(error) {
           tx.abort();
           console.log(error);
