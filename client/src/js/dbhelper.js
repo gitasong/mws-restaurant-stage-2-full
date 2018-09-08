@@ -113,9 +113,9 @@ export default class DBHelper {
     const dbPromise = DBHelper.openDatabase();
 
     return dbPromise.then(function(db) {
-      var tx = db.transaction('restaurants', 'readonly');
-      var restaurantStore = tx.objectStore('restaurants');
-      return restaurantStore.getAll()  // returns an array
+      const tx = db.transaction('restaurants', 'readonly');
+      const restaurantStore = tx.objectStore('restaurants');
+      return restaurantStore.getAll()
       .then((restaurants) => {
         console.log('Fetching restaurants from database', restaurants);
         return restaurants;
